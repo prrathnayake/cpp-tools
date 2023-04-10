@@ -1,7 +1,7 @@
 from conan import ConanFile
+from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.files import copy
 
-def getRequires():
-    return []
 
 class baseRecipe(object):
     name = None
@@ -12,20 +12,21 @@ class baseRecipe(object):
     default_options = {"shared": True}
 
     exports_sources = None
-    requires = None
-    
-    def validate(self):
-        if self.settings.name == None:
+    requires = []
+    req_len = len(requires)
+
+    def configure(self):
+        if self.name == None:
             raise ConanInvalidConfiguration("package name is required")
-        if self.settings.version == None:
+        if self.version == None:
             raise ConanInvalidConfiguration("package version is required")
-        if self.settings.exports_sources == None:
-            raise ConanInvalidConfiguration("package exports_sources are required")
-        
+        if self.exports_sources == None:
+            raise ConanInvalidConfiguration(
+                "package exports_sources are required")
+
     def requirements(self):
-         if self.settings.exports_sources != None:
-            requires = getRequires()
-            for req in requires:
+        if self.req_len != 0:
+            for req in self.requires:
                 self.requires(req)
 
     def layout(self):
@@ -43,9 +44,10 @@ class baseRecipe(object):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        
+
     def package_info(self):
         self.cpp_info.libs = [self.name]
+
 
 class Pkg(ConanFile):
     name = "cpp-tools"
