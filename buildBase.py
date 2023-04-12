@@ -12,6 +12,6 @@ for file in os.listdir(rootdir):
     dirs = os.path.join(rootdir, file)
     if os.path.isdir(dirs):
         if ("app" in dirs):
-            process = subprocess.Popen("conan create " + d + "/src", stdout=subprocess.PIPE, shell=True)
+            process = subprocess.Popen("conan create " + dirs + "/src", stdout=subprocess.PIPE, shell=True)
             print(process)
             process.wait()
