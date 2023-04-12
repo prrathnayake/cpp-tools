@@ -52,6 +52,7 @@ class baseRecipe(object):
 
     def package_info(self):
         self.cpp_info.libs = [self.name]
+        self.cpp_info.system_libs = [self.name]
 
 class Pkg(ConanFile):
     name = "cpp-tools"
