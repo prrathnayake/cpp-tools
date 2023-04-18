@@ -1,10 +1,13 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import copy
+from conan.errors import ConanInvalidConfiguration
 
 class BaseRecipe(object):
     name = None
     version = None
+    user = "pasan"
+    channel = "testing"
 
     license = None
     author = None
@@ -20,7 +23,7 @@ class BaseRecipe(object):
     requires = []
     req_len = len(requires)
 
-    def configure(self):
+    def validate(self):
         if self.name == None:
             raise ConanInvalidConfiguration("package name is required")
         if self.version == None:
@@ -32,7 +35,7 @@ class BaseRecipe(object):
     def requirements(self):
         if self.req_len != 0:
             for req in self.requires:
-                self.requires(req)
+                self.requires(req + "@pasan/testing")
 
     def layout(self):
         cmake_layout(self)
