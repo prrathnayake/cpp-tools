@@ -35,7 +35,7 @@ class BaseRecipe(object):
     def requirements(self):
         if self.req_len != 0:
             for req in self.requires:
-                self.requires(req + "@pasan/testing")
+                self.requires(req)
 
     def layout(self):
         cmake_layout(self)
