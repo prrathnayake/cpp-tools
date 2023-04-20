@@ -2,22 +2,28 @@ import os
 import sys
 import re
 import subprocess
- 
-rootdir = sys.argv[1]
+import argparse
 
-for file in os.listdir(rootdir):
-    dirs = os.path.join(rootdir, file)
-    if os.path.isdir(dirs):
-        if (len(sys.argv) > 2) :
-            if(sys.argv[2] in dirs):
-                process = subprocess.Popen("conan create " + dirs + "/src", stdout=subprocess.PIPE, shell=True)
-                print(process)
-                process.wait()
-            
-        elif(len(sys.argv) == 2 and "app" in dirs):
-            process = subprocess.Popen("conan create " + dirs + "/src", stdout=subprocess.PIPE, shell=True)
-            print(process)
-            process.wait()
-            
-        else:
-            print(("python3 " + sys.argv[0] + " path to ccp-base"))
+def createConanPackage(dirs):
+    process = subprocess.Popen("conan create " + dirs + "/src", stdout=subprocess.PIPE, shell=True)
+    print(process)
+    process.wait()
+    
+def main(args):
+    for file in os.listdir(args.path):
+        dirs = os.path.join(args.path, file)
+        if("app" in dirs):
+            if os.path.isdir(dirs):
+                if (args.package == None):
+                    createConanPackage(dirs)             
+                else:
+                    if(args.package == file):
+                        createConanPackage(dirs)
+         
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Create Conan Packages.')
+    parser.add_argument("path")
+    parser.add_argument("-p", "--package", help="package name")
+    args = parser.parse_args()
+    
+    main(args)
