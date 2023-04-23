@@ -2,6 +2,8 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import copy
 from conan.errors import ConanInvalidConfiguration
+import os
+
 
 class BaseRecipe(object):
     name = None
@@ -16,12 +18,11 @@ class BaseRecipe(object):
     topics = None
 
     settings = "os", "compiler", "build_type", "arch"
+    generators = "CMakeDeps", "CMakeToolchain"
     options = {"shared": [True, False]}
     default_options = {"shared": True}
 
     exports_sources = None
-    requires = []
-    req_len = len(requires)
 
     def validate(self):
         if self.name == None:
@@ -32,17 +33,8 @@ class BaseRecipe(object):
             raise ConanInvalidConfiguration(
                 "package exports_sources are required")
 
-    def requirements(self):
-        if self.req_len != 0:
-            for req in self.requires:
-                self.requires(req)
-
     def layout(self):
         cmake_layout(self)
-
-    def generate(self):
-        tc = CMakeToolchain(self)
-        tc.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -52,6 +44,8 @@ class BaseRecipe(object):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+        copy(self, "*.so", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+
 
     def package_info(self):
         self.cpp_info.libs = [self.name]
